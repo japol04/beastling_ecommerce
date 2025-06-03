@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Courier Dashboard</title>
+
+   <!-- FAVICON -->
+   <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo/favicon.png') }}">
+
+   <!-- BOOTSTRAP LINKS -->
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+   
+   <!-- CHART.JS -->
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   
+   <!-- OUTFIT FONT -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
+   <!-- INTER FONT -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+   
+   <!-- CUSTOM CSS - Load AFTER Bootstrap to ensure proper override -->
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}?v=2.0">
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/notification.css') }}">
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+
+   <style>
+   :root {
+      --primary-color: #FF9B45;
+      --primary-hover: #ff8c2c;
+      --secondary-color: #D5451B;
+      --secondary-hover: #bf3d17;
+   }
+
+   /* Sidebar Specific Styles */
+   .sidebar-link:hover {
+      background-color: var(--primary-color) !important;
+      color: white !important;
+   }
+
+   .sidebar-link.active {
+      background-color: var(--primary-color) !important;
+      color: white !important;
+      border-left: 4px solid var(--secondary-color) !important;
+   }
+
+   .sidebar-link.active .nav-text {
+      color: white !important;
+   }
+
+   .sidebar-link:hover .nav-text {
+      color: white !important;
+   }
+
+   .sidebar .btn {
+      background-color: var(--primary-color) !important;
+      border-color: var(--primary-color) !important;
+      color: white !important;
+   }
+
+   .sidebar .btn:hover {
+      background-color: var(--primary-hover) !important;
+      border-color: var(--primary-hover) !important;
+   }
+
+   /* Rest of your existing styles */
+   .dashboard-header {
+      background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+      padding: 2rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      color: white;
+   }
+   .stats-card {
+      border-radius: 12px;
+      border: none;
+      transition: transform 0.2s;
+      background: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+   }
+   .stats-card:hover {
+      transform: translateY(-5px);
+   }
+   .stats-icon {
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 1.5rem;
+   }
+   .main-content {
+      padding: 2rem;
+      background: #f8f9fc;
+      min-height: 100vh;
+   }
+   .navbar {
+      background: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+   }
+
+   /* Custom Button Styles */
+   .btn-primary {
+      background-color: var(--primary-color) !important;
+      border-color: var(--primary-color) !important;
+      color: white !important;
+   }
+
+   .btn-primary:hover, .btn-primary:focus {
+      background-color: var(--primary-hover) !important;
+      border-color: var(--primary-hover) !important;
+   }
+
+   .btn-secondary {
+      background-color: var(--secondary-color) !important;
+      border-color: var(--secondary-color) !important;
+      color: white !important;
+   }
+
+   .btn-secondary:hover, .btn-secondary:focus {
+      background-color: var(--secondary-hover) !important;
+      border-color: var(--secondary-hover) !important;
+   }
+
+   .btn-outline-primary {
+      color: var(--primary-color) !important;
+      border-color: var(--primary-color) !important;
+   }
+
+   .btn-outline-primary:hover, .btn-outline-primary:focus {
+      background-color: var(--primary-color) !important;
+      color: white !important;
+   }
+
+   /* Badge Colors */
+   .badge.bg-primary {
+      background-color: var(--primary-color) !important;
+   }
+
+   .badge.bg-secondary {
+      background-color: var(--secondary-color) !important;
+   }
+
+   /* Text Colors */
+   .text-primary {
+      color: var(--primary-color) !important;
+   }
+
+   .text-secondary {
+      color: var(--secondary-color) !important;
+   }
+
+   /* Background Colors */
+   .bg-primary {
+      background-color: var(--primary-color) !important;
+   }
+
+   .bg-secondary {
+      background-color: var(--secondary-color) !important;
+   }
+
+   /* Link Colors */
+   a {
+      color: var(--primary-color);
+   }
+
+   a:hover {
+      color: var(--primary-hover);
+   }
+
+   /* Dropdown Active State */
+   .dropdown-item.active, .dropdown-item:active {
+      background-color: var(--primary-color);
+   }
+
+   /* Chart Colors */
+   #earningsChart {
+      --chart-primary: var(--primary-color);
+      --chart-secondary: var(--secondary-color);
+   }
+
+   /* Modal Headers */
+   .modal-header.bg-primary {
+      background: var(--primary-color) !important;
+   }
+
+   /* Pagination */
+   .page-link {
+      color: var(--primary-color);
+   }
+
+   .page-link:hover {
+      color: var(--primary-hover);
+   }
+
+   .page-item.active .page-link {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+   }
+
+   /* Table Hover */
+   .table-hover tbody tr:hover {
+      background-color: rgba(255, 155, 69, 0.05);
+   }
+
+   /* Custom Background Utilities */
+   .bg-primary-subtle {
+      background-color: rgba(255, 155, 69, 0.1) !important;
+   }
+
+   .bg-secondary-subtle {
+      background-color: rgba(213, 69, 27, 0.1) !important;
+   }
+
+   /* Progress Bars */
+   .progress-bar {
+      background-color: var(--primary-color);
+   }
+   </style>
+</head>
+
+<body>
+  
+   <div class="d-flex">
+
+      <!-- Sidebar -->
+      <aside id="sidebar" class="sidebar-toggle">
+         <!-- Sidebar Logo -->
+         <div class="sidebar-logo d-flex flex-row align-items-center">
+            {% if session.get('profile_pic') %}
+               <img src="{{ url_for('courier_dashboard.serve_profile_pic', filename=session['profile_pic']) }}" alt="User Logo" class="img-fluid" style="width: 40px; height: 40px; object-fit: cover; border-radius: 5px;">
+            {% else %}
+               <img src="{{ url_for('static', filename='img/profile/default_profile.png') }}" alt="Default Logo" class="img-fluid border" style="width: 40px; height: 40px; object-fit: cover; border-radius: 5px;">
+            {% endif %}
+            <div class="d-flex flex-column align-items-start text-white ms-3 w-100">
+               {% if session.get('personal_info') %}
+                  <span class="fw-semibold text-truncate text-dark">{{ session['personal_data']['firstname'] }} {{ session['personal_data']['lastname'] }}</span>
+                  <span class="text-truncate text-dark" style="font-size: 0.9rem;">{{ session['contact_data']['email'] }}</span>
+               {% else %}
+                  <span class="fw-semibold text-truncate text-dark">Guest</span>
+                  <span class="text-truncate text-dark" style="font-size: 0.9rem;">Please log in</span>
+               {% endif %}
+            </div>
+         </div>
+
+         <hr class="text-white header-hr">
+
+         <!-- Sidebar Navs -->
+         <ul class="sidebar-nav p-0 d-flex flex-column gap-3">
+            <li class="sidebar-header mt-3 text-secondary fw-semibold">
+               GENERAL
+            </li>
+
+            <!-- Dashboard -->        
+            <li class="sidebar-item ">
+                <a href="{{ url_for('courier_dashboard.dashboard')}}" class="sidebar-link {% if request.path == url_for('courier_dashboard.dashboard') %}active{% endif %}">
+                  <img src="{{ url_for('static', filename='img/sidebar_navs/dashboard_outline.png') }}">
+                    <span class="nav-text ms-3 text-dark">Dashboard</span>
+                </a>    
+            </li>
+            
+            <!-- Delivery --> 
+            <li class="sidebar-item">
+                <a href="{{ url_for('courier_delivery.delivery')}}" class="sidebar-link {% if request.path == url_for('courier_delivery.delivery') %}active{% endif %}">
+                    <img src="{{ url_for('static', filename='img/sidebar_navs/delivery_outline.png') }}">
+                    <span class="nav-text ms-3 text-dark">Delivery</span>
+                </a>
+            </li>
+
+            <!-- Finance --> 
+            <li class="sidebar-item">
+               <a href="{{ url_for('courier_finance.finance')}}" class="sidebar-link {% if request.path == url_for('courier_finance.finance') %}active{% endif %}">
+                 <img src="{{ url_for('static', filename='img/sidebar_navs/commission_outline.png') }}">
+                 <span class="nav-text ms-3 text-dark">Finance</span>                  
+               </a>
+           </li>
+
+            <!-- Messages
+            <li class="sidebar-item">
+                <a href="{{ url_for('courier_messages.messages')}}" class="sidebar-link d-flex justify-content-between {% if request.path == url_for('courier_messages.messages') %}active{% endif %}">
+                   <div class="d-flex justify-content-start">
+                     <img src="{{ url_for('static', filename='img/sidebar_navs/message_outline.png') }}">
+                      <span class="nav-text ms-3 text-dark">Messages</span>
+                   </div>
+                   <span class="badge bg-primary text-white d-flex justify-content-end">+ 2</span>
+                </a>
+            </li> --> 
+
+            <!-- Notifications --> 
+            <li class="sidebar-item">
+               <a href="{{ url_for('courier_notifications.notifications')}}" class="sidebar-link d-flex justify-content-between {% if request.path == url_for('courier_notifications.notifications') %}active{% endif %}">
+                  <div class="d-flex justify-content-start">
+                     <img src="{{ url_for('static', filename='img/sidebar_navs/notification_outline.png') }}">
+                     <span class="nav-text ms-3 text-dark">Notifications</span>
+                  </div>
+                  <span id="notificationBadge" class="badge bg-primary text-white d-flex justify-content-end">
+                     {% if session.get('notif_unread_count') %}
+                        + {{ session.get('notif_unread_count') }}
+                     {% else %}
+                        0
+                     {% endif %}
+                  </span>
+               </a>
+            </li>
+
+            <li class="sidebar-header mt-3 text-secondary fw-semibold">ACCOUNT</li>
+
+            <!-- Sidebar Settings --> 
+            <li class="sidebar-item ">
+               <a href="{{ url_for('courier_settings.settings')}}" class="sidebar-link {% if request.path == url_for('courier_settings.settings') %}active{% endif %}">
+                  <img src="{{ url_for('static', filename='img/sidebar_navs/settings_outline.png') }}">
+                  <span class="nav-text ms-3 text-dark">Settings</span>
+               </a>
+            </li>
+            
+            <!-- Sidebar Log Out -->           
+            <li class="sidebar-item">
+               <a href="{{ url_for('login.logout')}}" class="sidebar-link {% if request.path == url_for('login.logout') %}active{% endif %}">
+                  <img src="{{ url_for('static', filename='img/sidebar_navs/logout_outline.png') }}">
+                  <span class="nav-text ms-3 text-dark">Log Out</span>
+               </a>
+            </li>
+         </ul>
+
+         <!-- Sidebar Footer -->
+         <div class="sidebar-footer">
+            <hr class="text-white">
+            <a href="#" class="sidebar-link footer-link">
+                <span class="text-white">&copy; 2024 Beastling Ecommerce</span>
+            </a>
+        </div>
+
+      </aside>
+      <!-- Sidebar Ends -->
+
+      <!-- Main -->
+      {% block courier_content %}
+         <div class="main w-100">
+            <!-- Modern Navbar -->
+            <nav class="navbar navbar-expand px-4 py-3">
+               <div class="d-flex align-items-center w-100 justify-content-between">
+                  <div class="d-flex align-items-center">
+                     <button class="toggler-btn me-3" type="button">
+                        <i class="bi bi-list fs-4"></i>
+                     </button>
+                     <h5 class="mb-0 fw-semibold">Welcome Back, {{ session['personal_data']['firstname'] if session.get('personal_data') else 'Guest' }}!</h5>
+                  </div>
+                  <div class="d-flex align-items-center gap-3">
+                     <div class="d-none d-md-block">
+                        <div class="input-group">
+                           <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+                           <button class="btn btn-primary" type="button">
+                              <i class="bi bi-search"></i>
+                           </button>
+                        </div>
+                     </div>
+                     <button class="btn btn-primary d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop">
+                        <i class="bi bi-search"></i>
+                     </button>
+                  </div>
+               </div>
+            </nav>
+
+            <div class="main-content">
+               <!-- Dashboard Header -->
+               <div class="dashboard-header">
+                  <div class="row align-items-center">
+                     <div class="col-md-6">
+                        <h3 class="mb-1">{{ page_title if page_title else 'Dashboard Overview' }}</h3>
+                        <p class="mb-0 opacity-75">{{ page_description if page_description else 'Monitor your delivery performance and analytics' }}</p>
+                     </div>
+                     <div class="col-md-6">
+                        <div class="d-flex justify-content-md-end justify-content-start mt-3 mt-md-0 gap-2">
+                           <!-- Date Filter Dropdown -->
+                           <div class="dropdown">
+                              <button class="btn btn-light dropdown-toggle" type="button" id="dateFilterDropdown" data-bs-toggle="dropdown">
+                                 <i class="bi bi-calendar3"></i> Date Filter
+                              </button>
+                              <ul class="dropdown-menu">
+                                 <li><a class="dropdown-item {% if date_filter == 'today' %}active{% endif %}" 
+                                       href="{{ url_for('courier_dashboard.dashboard', date_filter='today') }}">Today</a></li>
+                                 <li><a class="dropdown-item {% if date_filter == 'last_7_days' %}active{% endif %}"
+                                       href="{{ url_for('courier_dashboard.dashboard', date_filter='last_7_days') }}">Last 7 Days</a></li>
+                                 <li><a class="dropdown-item {% if date_filter == 'last_30_days' %}active{% endif %}"
+                                       href="{{ url_for('courier_dashboard.dashboard', date_filter='last_30_days') }}">Last 30 Days</a></li>
+                                 <li><a class="dropdown-item {% if date_filter == 'this_month' %}active{% endif %}"
+                                       href="{{ url_for('courier_dashboard.dashboard', date_filter='this_month') }}">This Month</a></li>
+                              </ul>
+                           </div>
+                           <!-- Custom Date Picker -->
+                           <form class="d-none d-md-flex gap-2" method="GET" action="{{ url_for('courier_dashboard.dashboard') }}">
+                              <input type="date" name="custom_date" class="form-control bg-light border-0" value="{{ custom_date }}">
+                              <button type="submit" class="btn btn-light">
+                                 <i class="bi bi-check2"></i>
+                              </button>
+                           </form>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               <!-- Statistics Cards -->
+               <div class="row g-4 mb-4">
+                  <!-- Total Deliveries -->
+                  <div class="col-xl-3 col-md-6">
+                     <div class="stats-card">
+                        <div class="card-body p-4">
+                           <div class="d-flex justify-content-between align-items-center">
+                              <div>
+                                 <h6 class="text-muted mb-2">Total Deliveries</h6>
+                                 <h4 class="mb-0">{{ stats.earnings_stats.total_deliveries or 0 }}</h4>
+                              </div>
+                              <div class="stats-icon" style="background-color: rgba(255, 155, 69, 0.1); color: var(--primary-color);">
+                                 <i class="bi bi-truck"></i>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  <!-- Total Earnings -->
+                  <div class="col-xl-3 col-md-6">
+                     <div class="stats-card">
+                        <div class="card-body p-4">
+                           <div class="d-flex justify-content-between align-items-center">
+                              <div>
+                                 <h6 class="text-muted mb-2">Total Earnings</h6>
+                                 <h4 class="mb-0">₱{{ "{:,.0f}".format(stats.earnings_stats.total_earnings or 0) }}</h4>
+                              </div>
+                              <div class="stats-icon" style="background-color: rgba(213, 69, 27, 0.1); color: var(--secondary-color);">
+                                 <i class="bi bi-currency-dollar"></i>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  <!-- Average Earning -->
+                  <div class="col-xl-3 col-md-6">
+                     <div class="stats-card">
+                        <div class="card-body p-4">
+                           <div class="d-flex justify-content-between align-items-center">
+                              <div>
+                                 <h6 class="text-muted mb-2">Average Earning</h6>
+                                 <h4 class="mb-0">₱{{ "{:,.0f}".format(stats.earnings_stats.average_earning or 0) }}</h4>
+                              </div>
+                              <div class="stats-icon" style="background-color: rgba(255, 155, 69, 0.1); color: var(--primary-color);">
+                                 <i class="bi bi-bar-chart"></i>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  <!-- Highest Earning -->
+                  <div class="col-xl-3 col-md-6">
+                     <div class="stats-card">
+                        <div class="card-body p-4">
+                           <div class="d-flex justify-content-between align-items-center">
+                              <div>
+                                 <h6 class="text-muted mb-2">Highest Earning</h6>
+                                 <h4 class="mb-0">₱{{ "{:,.0f}".format(stats.earnings_stats.highest_earning or 0) }}</h4>
+                              </div>
+                              <div class="stats-icon" style="background-color: rgba(213, 69, 27, 0.1); color: var(--secondary-color);">
+                                 <i class="bi bi-trophy"></i>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               <!-- Earnings Chart and Delivery Status -->
+               <div class="row g-4 mb-4">
+                  <!-- Earnings Chart -->
+                  <div class="col-xl-8">
+                     <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header border-0 bg-transparent pt-4 px-4">
+                           <div class="d-flex justify-content-between align-items-center">
+                              <h5 class="mb-0">Earnings Overview</h5>
+                              <div class="d-flex gap-2">
+                                 <!-- Chart Period Filter -->
+                                 <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="chartPeriodDropdown" data-bs-toggle="dropdown">
+                                       <i class="bi bi-calendar3"></i> Period
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                       <li><a class="dropdown-item {% if chart_period == 'last_7_days' %}active{% endif %}" 
+                                             href="{{ url_for('courier_dashboard.dashboard', chart_period='last_7_days') }}">Last 7 Days</a></li>
+                                       <li><a class="dropdown-item {% if chart_period == 'last_14_days' %}active{% endif %}"
+                                             href="{{ url_for('courier_dashboard.dashboard', chart_period='last_14_days') }}">Last 14 Days</a></li>
+                                       <li><a class="dropdown-item {% if chart_period == 'last_30_days' %}active{% endif %}"
+                                             href="{{ url_for('courier_dashboard.dashboard', chart_period='last_30_days') }}">Last 30 Days</a></li>
+                                       <li><a class="dropdown-item {% if chart_period == 'this_month' %}active{% endif %}"
+                                             href="{{ url_for('courier_dashboard.dashboard', chart_period='this_month') }}">This Month</a></li>
+                                    </ul>
+                                 </div>
+                                 <!-- Custom Date -->
+                                 <form method="GET" action="{{ url_for('courier_dashboard.dashboard') }}" class="d-flex gap-2">
+                                    <input type="date" name="chart_custom_date" class="form-control form-control-sm" value="{{ chart_custom_date }}">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                       <i class="bi bi-check2"></i>
+                                    </button>
+                                 </form>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="card-body p-4">
+                           <canvas id="earningsChart" height="300"></canvas>
+                        </div>
+                     </div>
+                  </div>
+
+                  <!-- Delivery Status -->
+                  <div class="col-xl-4">
+                     <div class="row g-4">
+                        <!-- Pending Deliveries -->
+                        <div class="col-12">
+                           <div class="stats-card">
+                              <div class="card-body p-4">
+                                 <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                       <h6 class="text-muted mb-2">Pending Deliveries</h6>
+                                       <h4 class="mb-0">{{ stats.delivery_stats.pending_deliveries or 0 }}</h4>
+                                    </div>
+                                    <div class="stats-icon" style="background-color: rgba(255, 155, 69, 0.1); color: var(--primary-color);">
+                                       <i class="bi bi-clock"></i>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+                        <!-- Active Deliveries -->
+                        <div class="col-12">
+                           <div class="stats-card">
+                              <div class="card-body p-4">
+                                 <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                       <h6 class="text-muted mb-2">Active Deliveries</h6>
+                                       <h4 class="mb-0">{{ stats.delivery_stats.active_deliveries or 0 }}</h4>
+                                    </div>
+                                    <div class="stats-icon" style="background-color: rgba(213, 69, 27, 0.1); color: var(--secondary-color);">
+                                       <i class="bi bi-truck"></i>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+                        <!-- Completed Deliveries -->
+                        <div class="col-12">
+                           <div class="stats-card">
+                              <div class="card-body p-4">
+                                 <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                       <h6 class="text-muted mb-2">Completed Deliveries</h6>
+                                       <h4 class="mb-0">{{ stats.delivery_stats.completed_deliveries or 0 }}</h4>
+                                    </div>
+                                    <div class="stats-icon" style="background-color: rgba(255, 155, 69, 0.1); color: var(--primary-color);">
+                                       <i class="bi bi-check-circle"></i>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+
+                        <!-- Total Assigned -->
+                        <div class="col-12">
+                           <div class="stats-card">
+                              <div class="card-body p-4">
+                                 <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                       <h6 class="text-muted mb-2">Total Assigned</h6>
+                                       <h4 class="mb-0">{{ stats.delivery_stats.total_assigned_deliveries or 0 }}</h4>
+                                    </div>
+                                    <div class="stats-icon" style="background-color: rgba(213, 69, 27, 0.1); color: var(--secondary-color);">
+                                       <i class="bi bi-list-ul"></i>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               <!-- Recent Deliveries Table -->
+               <div class="row g-4">
+                  <div class="col-12">
+                     <div class="card border-0 shadow-sm">
+                        <div class="card-header border-0 bg-transparent pt-4 px-4">
+                           <div class="d-flex justify-content-between align-items-center">
+                              <h5 class="mb-0">Recent Deliveries</h5>
+                              <a href="{{ url_for('courier_delivery.delivery') }}" class="btn btn-primary btn-sm">
+                                 View All <i class="bi bi-arrow-right"></i>
+                              </a>
+                           </div>
+                        </div>
+                        <div class="card-body p-0">
+                           <div class="table-responsive">
+                              <table class="table table-hover align-middle mb-0">
+                                 <thead class="bg-light">
+                                    <tr>
+                                       <th class="ps-4">Order ID</th>
+                                       <th>Product</th>
+                                       <th>Buyer</th>
+                                       <th>Amount</th>
+                                       <th>Status</th>
+                                       <th class="pe-4">Date</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {% if recent_deliveries %}
+                                       {% for delivery in recent_deliveries %}
+                                       <tr>
+                                          <td class="ps-4 fw-semibold">#{{ delivery.order_id }}</td>
+                                          <td>
+                                             <div class="d-flex align-items-center">
+                                                <img src="{{ url_for('courier_dashboard.serve_product_main_pic', filename=delivery.product_main_pic) }}" 
+                                                     alt="{{ delivery.product_name }}" 
+                                                     class="me-3 rounded" 
+                                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                                <div>
+                                                   <div class="fw-semibold">{{ delivery.product_name[:20] }}{% if delivery.product_name|length > 20 %}...{% endif %}</div>
+                                                   <small class="text-muted">{{ delivery.variant }} - {{ delivery.color }}</small>
+                                                </div>
+                                             </div>
+                                          </td>
+                                          <td>
+                                             <div>
+                                                <div class="fw-semibold">{{ delivery.buyer_firstname }} {{ delivery.buyer_lastname }}</div>
+                                                <small class="text-muted">{{ delivery.buyer_phone }}</small>
+                                             </div>
+                                          </td>
+                                          <td class="fw-semibold">₱{{ "{:,.2f}".format(delivery.total_amount) }}</td>
+                                          <td>
+                                             <span class="badge rounded-pill 
+                                             {% if delivery.delivery_status == 'For Delivery' %}bg-warning-subtle text-warning
+                                             {% elif delivery.delivery_status == 'Out for Delivery' %}bg-primary-subtle text-primary
+                                             {% elif delivery.delivery_status == 'Delivered' %}bg-success-subtle text-success
+                                             {% else %}bg-secondary-subtle text-secondary{% endif %}">
+                                                {{ delivery.delivery_status }}
+                                             </span>
+                                          </td>
+                                          <td class="pe-4">{{ delivery.date_delivered.strftime('%m/%d/%Y') }}</td>
+                                       </tr>
+                                       {% endfor %}
+                                    {% else %}
+                                       <tr>
+                                          <td colspan="6" class="text-center py-5">
+                                             <div class="text-muted">
+                                                <i class="bi bi-truck display-6 d-block mb-3"></i>
+                                                <p class="mb-0">No recent deliveries available</p>
+                                             </div>
+                                          </td>
+                                       </tr>
+                                    {% endif %}
+                                 </tbody>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+            </div>          
+         </div>
+     
+      {% endblock %}
+      <!-- Main End-->
+
+   </div>
+
+   <!-- Mobile Filters Modal -->
+   <div class="modal fade" id="mobileFiltersModal" tabindex="-1" aria-labelledby="mobileFiltersModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+               <h6 class="modal-title" id="mobileFiltersModalLabel">Filter Dashboard</h6>
+               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <form method="GET" action="{{ url_for('courier_dashboard.dashboard') }}">
+                  <!-- Dashboard Filters -->
+                  <h6 class="text-primary mb-3">Dashboard Filters</h6>
+                  
+                  <div class="mb-3">
+                     <label for="mobileDateFilter" class="form-label">Date Filter</label>
+                     <select name="date_filter" id="mobileDateFilter" class="form-select">
+                        <option value="today" {% if date_filter == 'today' %}selected{% endif %}>Today</option>
+                        <option value="last_7_days" {% if date_filter == 'last_7_days' %}selected{% endif %}>Last 7 Days</option>
+                        <option value="last_30_days" {% if date_filter == 'last_30_days' %}selected{% endif %}>Last 30 Days</option>
+                        <option value="this_month" {% if date_filter == 'this_month' %}selected{% endif %}>This Month</option>
+                     </select>
+                  </div>
+
+                  <div class="mb-3">
+                     <label for="mobileOrder" class="form-label">Order</label>
+                     <select name="order" id="mobileOrder" class="form-select">
+                        <option value="desc" {% if order == 'desc' %}selected{% endif %}>Latest/Highest First</option>
+                        <option value="asc" {% if order == 'asc' %}selected{% endif %}>Oldest/Lowest First</option>
+                     </select>
+                  </div>
+                  
+                  <div class="mb-3">
+                     <label for="mobileCustomDate" class="form-label">Custom Date</label>
+                     <input type="date" name="custom_date" id="mobileCustomDate" class="form-control" value="{{ custom_date }}">
+                  </div>
+
+                  <hr>
+
+                  <!-- Chart Filters -->
+                  <h6 class="text-success mb-3">Chart Filters</h6>
+                  
+                  <div class="mb-3">
+                     <label for="mobileChartPeriod" class="form-label">Chart Period</label>
+                     <select name="chart_period" id="mobileChartPeriod" class="form-select">
+                        <option value="last_7_days" {% if chart_period == 'last_7_days' %}selected{% endif %}>Last 7 Days</option>
+                        <option value="last_14_days" {% if chart_period == 'last_14_days' %}selected{% endif %}>Last 14 Days</option>
+                        <option value="last_30_days" {% if chart_period == 'last_30_days' %}selected{% endif %}>Last 30 Days</option>
+                        <option value="this_month" {% if chart_period == 'this_month' %}selected{% endif %}>This Month</option>
+                     </select>
+                  </div>
+
+                  <div class="mb-3">
+                     <label for="mobileChartCustomDate" class="form-label">Chart Custom Date</label>
+                     <input type="date" name="chart_custom_date" id="mobileChartCustomDate" class="form-control" value="{{ chart_custom_date }}">
+                  </div>
+                  
+                  <div class="d-flex gap-2">
+                     <button type="submit" class="btn btn-primary flex-fill">Apply Filters</button>
+                     <a href="{{ url_for('courier_dashboard.dashboard') }}" class="btn btn-secondary">Reset</a>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <!-- Modal for Logout Confirmation -->
+   <div class="modal fade" id="logoutConfirmationModal" tabindex="-1" aria-labelledby="logoutConfirmationModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+         <div  div class="modal-content">
+            <div class="modal-header bg-primary">
+               <h6 class="modal-title text-white" id="logoutConfirmationModalLabel">Logout Confirmation</h6>
+               <button type="button" class="border-0 bg-transparent text-white" data-bs-dismiss="modal" aria-label="Close">
+                  <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+               Are you sure you want to log out?
+            </div>
+            <div class="modal-footer border-0">
+               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+               <a href="{{ url_for('login.logout') }}" class="btn btn-primary">Yes, Log me Out</a>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <script>
+      // Toggler Button 
+      const toggler = document.querySelector(".toggler-btn");
+      toggler.addEventListener("click", function () {
+         document.querySelector("#sidebar").classList.toggle("collapsed");
+      });
+
+      // Show Logout Confirmation 
+      document.addEventListener("DOMContentLoaded", function() {
+         const logoutUrl = "{{ url_for('login.logout') }}";
+         const logoutButton = document.querySelector(`a[href="${logoutUrl}"]`);
+         
+         if (logoutButton) {
+            logoutButton.addEventListener("click", function(event) {
+               event.preventDefault();
+               const logoutModal = new bootstrap.Modal(document.getElementById("logoutConfirmationModal"));
+               logoutModal.show();
+            });
+         }
+
+         // Hover Effect for Sidebar Icons
+         document.querySelectorAll(".sidebar-link").forEach(function(link) {
+            const img = link.querySelector("img");
+            if (img) {
+               const defaultSrc = img.src;
+               const hoverSrc = defaultSrc.replace("_outline.png", "_solid.png");
+   
+               if (link.classList.contains("active")) {
+                  img.src = hoverSrc;
+                  link.style.backgroundColor = "rgba(255, 155, 69, 0.15)";
+                  link.style.borderLeft = "4px solid #FF9800";
+               }
+   
+               link.addEventListener("mouseover", function() {
+                  img.src = hoverSrc;
+                  this.style.backgroundColor = "rgba(255, 155, 69, 0.1)";
+               });
+   
+               link.addEventListener("mouseout", function() {
+                  if (!link.classList.contains("active")) {
+                     img.src = defaultSrc;
+                     this.style.backgroundColor = "";
+                  }
+               });
+            }
+         });
+      });
+
+      // Update Notification Badge
+      function updateNotificationBadge() {
+         fetch("/courier/notifications/count")
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+               const badge = document.getElementById("notificationBadge");
+               if (data.count > 0) {
+                  badge.textContent = `+ ${data.count}`;
+                  badge.style.display = "block";
+               } else {
+                  badge.style.display = "none";
+               }
+            })
+            .catch(function(error) { console.error("Error fetching notification count:", error); });
+      }
+
+      // Update badge on page load
+      document.addEventListener("DOMContentLoaded", updateNotificationBadge);
+
+      // Update badge every 30 seconds
+      setInterval(updateNotificationBadge, 30000);
+
+      // Mark notifications as read when clicking the notifications link
+      document.addEventListener("DOMContentLoaded", function() {
+         const notifUrl = "{{ url_for('courier_notifications.notifications') }}";
+         const notificationsLink = document.querySelector(`a[href="${notifUrl}"]`);
+         
+         if (notificationsLink) {
+            notificationsLink.addEventListener("click", function() {
+               fetch("/courier/notifications/read", {
+                  method: "POST",
+                  headers: {
+                     "Content-Type": "application/json"
+                  }
+               })
+               .then(function(response) { return response.json(); })
+               .then(function(data) {
+                  if (data.success) {
+                     const badge = document.getElementById("notificationBadge");
+                     badge.style.display = "none";
+                  }
+               })
+               .catch(function(error) { console.error("Error marking notifications as read:", error); });
+            });
+         }
+      });
+   </script>
+
+   <!-- Separate Chart Script - Using window.onload to avoid conflicts -->
+   <script>
+      window.addEventListener("load", function() {
+         const chartData = JSON.parse('{{ chart_data|safe }}');
+         
+         // Single Earnings Chart with Enhanced UI
+         const earningsCtx = document.getElementById("earningsChart").getContext("2d");
+         new Chart(earningsCtx, {
+            type: "line",
+            data: {
+               labels: chartData.daily_labels,
+               datasets: [{
+                  label: "Earnings",
+                  data: chartData.daily_earnings,
+                  fill: true,
+                  borderColor: "var(--primary-color)",
+                  backgroundColor: "rgba(255, 155, 69, 0.1)",
+                  borderWidth: 3,
+                  tension: 0.4,
+                  pointBackgroundColor: "var(--primary-color)",
+                  pointBorderColor: "#ffffff",
+                  pointBorderWidth: 3,
+                  pointRadius: 5,
+                  pointHoverRadius: 8,
+                  pointHoverBackgroundColor: "var(--secondary-color)",
+                  pointHoverBorderColor: "#ffffff",
+                  pointHoverBorderWidth: 3
+               }]
+            },
+            options: {
+               responsive: true,
+               maintainAspectRatio: false,
+               plugins: {
+                  legend: {
+                     display: false
+                  },
+                  tooltip: {
+                     enabled: true,
+                     backgroundColor: "rgba(255, 255, 255, 0.95)",
+                     titleColor: "#333333",
+                     bodyColor: "#333333",
+                     borderColor: "var(--primary-color)",
+                     borderWidth: 2,
+                     cornerRadius: 10,
+                     displayColors: false,
+                     titleFont: {
+                        size: 14,
+                        weight: "bold"
+                     },
+                     bodyFont: {
+                        size: 13
+                     },
+                     padding: 12,
+                     caretSize: 8,
+                     callbacks: {
+                        title: function(context) {
+                           return context[0].label;
+                        },
+                        label: function(context) {
+                           return "Earnings: ₱" + context.parsed.y.toLocaleString();
+                        }
+                     }
+                  }
+               },
+               scales: {
+                  x: {
+                     display: true,
+                     grid: {
+                        display: true,
+                        color: "rgba(0, 0, 0, 0.05)",
+                        borderColor: "rgba(0, 0, 0, 0.1)",
+                        borderWidth: 1
+                     },
+                     ticks: {
+                        color: "#858796",
+                        font: {
+                           size: 12,
+                           family: "Outfit"
+                        },
+                        padding: 10
+                     },
+                     border: {
+                        color: "rgba(0, 0, 0, 0.1)"
+                     }
+                  },
+                  y: {
+                     display: true,
+                     beginAtZero: true,
+                     grid: {
+                        display: true,
+                        color: "rgba(0, 0, 0, 0.05)",
+                        borderColor: "rgba(0, 0, 0, 0.1)",
+                        borderWidth: 1
+                     },
+                     ticks: {
+                        color: "#858796",
+                        font: {
+                           size: 12,
+                           family: "Outfit"
+                        },
+                        padding: 10,
+                        callback: function(value) {
+                           return "₱" + value.toLocaleString();
+                        }
+                     },
+                     border: {
+                        color: "rgba(0, 0, 0, 0.1)"
+                     }
+                  }
+               },
+               interaction: {
+                  intersect: false,
+                  mode: "index"
+               },
+               elements: {
+                  line: {
+                     capBezierPoints: false
+                  },
+                  point: {
+                     hoverBackgroundColor: "var(--secondary-color)"
+                  }
+               },
+               layout: {
+                  padding: {
+                     top: 10,
+                     bottom: 10,
+                     left: 10,
+                     right: 10
+                  }
+               },
+               animation: {
+                  duration: 1000,
+                  easing: "easeOutQuart"
+               }
+            }
+         });
+      });
+   </script>
+   
+</body>
+</html>

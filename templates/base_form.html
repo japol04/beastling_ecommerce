@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="no-store" content="true">
+    <meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="pragma" content="no-cache">
+    
+    <!-- SEARCH ENGINE KEYWORDS -->
+    {% block search_keyword %}
+    <meta name="keywords" content="Beastling, Ecommerce, Online Store">
+    <meta name="description" content="Welcome to Beastling, your trusted e-commerce platform.">
+    {% endblock %}
+
+    <!-- WEB PAGE TITLE -->
+    <title>{% block title %}Beastling Login{% endblock %}</title>
+
+    <!-- FAVICON -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo/favicon.png') }}">
+
+    <!-- BOOTSTRAP LINKS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- CSS & JS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <script src="{{ url_for('static', filename='js/input_restrict.js') }}"></script>
+
+    <!-- OUTFIT FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
+    <!-- INTER FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}?v=2.0">
+
+    
+    <!-- GLOBAL STYLES -->
+    <style>
+        :root {
+            --hover-color: #521C0D;
+            --hover-bg-light: rgba(82, 28, 13, 0.1);
+        }
+
+        /* Card Hover Effects */
+        .card:hover {
+            border-color: var(--hover-color) !important;
+            box-shadow: 0 0.5rem 1rem var(--hover-bg-light) !important;
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+
+        /* Button Hover Effects */
+        .btn:hover {
+            background-color: var(--hover-color) !important;
+            border-color: var(--hover-color) !important;
+            color: white !important;
+        }
+
+        /* Link Hover Effects */
+        a:hover {
+            color: var(--hover-color) !important;
+        }
+
+        /* Table Row Hover Effects */
+        .table-hover tbody tr:hover {
+            background-color: var(--hover-bg-light) !important;
+        }
+
+        /* Sidebar Link Hover Effects */
+        .sidebar-link:hover {
+            background-color: var(--hover-bg-light) !important;
+            color: var(--hover-color) !important;
+        }
+
+        /* Dropdown Item Hover Effects */
+        .dropdown-item:hover {
+            background-color: var(--hover-bg-light) !important;
+            color: var(--hover-color) !important;
+        }
+
+        /* Form Control Focus Effects */
+        .form-control:focus {
+            border-color: var(--hover-color) !important;
+            box-shadow: 0 0 0 0.25rem var(--hover-bg-light) !important;
+        }
+
+        /* Badge Hover Effects */
+        .badge:hover {
+            background-color: var(--hover-color) !important;
+        }
+
+        /* Nav Link Hover Effects */
+        .nav-link:hover {
+            color: var(--hover-color) !important;
+        }
+
+        /* Stats Card Hover Effects */
+        .stats-card:hover {
+            border-color: var(--hover-color) !important;
+            box-shadow: 0 0.5rem 1rem var(--hover-bg-light) !important;
+        }
+
+        /* Icon Hover Effects */
+        .bi:hover {
+            color: var(--hover-color) !important;
+        }
+
+        /* Custom Transition for All Hover Effects */
+        .card, .btn, a, .badge, .nav-link, .stats-card, .bi, .form-control, .sidebar-link, .dropdown-item {
+            transition: all 0.3s ease !important;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container" >   
+        
+        <!-- Main Component -->
+        {% block content %}{% endblock %}
+
+    </div>
+
+</body>
+</html>
